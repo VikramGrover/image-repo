@@ -7,13 +7,77 @@ class RepositoryController < ApplicationController
   def index
   end
 
-  def upload()
-    newImage = Image.create(name: params[:image].original_filename, image_text: '', tags: '', s3_url: '')
-    s3 = Aws::S3::Resource.new(region: 'us-east-1', access_key_id: Rails.application.credentials.aws[:access_key_id],
-                               secret_access_key: Rails.application.credentials.aws[:secret_access_key])
-    obj = s3.bucket(ENV['S3_BUCKET']).object(newImage.id.to_s)
-    path = params[:image].tempfile.path
-    result = obj.upload_file(path)
-    puts result
+  def upload
+    new_image = Image.create(name: params[:image].original_filename, image_text: '', tags: '', s3_url: '')
+    obj = @s3.bucket(Rails.application.credentials.aws[:bucket]).object(new_image.id.to_s)
+    success = obj.upload_file(params[:image].tempfile.path)
+    Image.delete(new_image.id) unless success
+
+    Image.clear_selection
+
+    respond_to do |format|
+      format.html { redirect_to root_path, notice: 'Success' }
+      format.json { head :no_content }
+    end
+
+    response = @image_annotator.label_detection(
+      image: params[:image].tempfile.path,
+      max_results: 10
+    )
+
+    tags = ''
+    response.responses.each do |res|
+      res.label_annotations.each do |label|
+        if label.score > 0.80
+          tags += "|#{label.description}"
+        end
+      end
+    end
+
+    new_image.tags = tags
+    new_image.save
+  end
+
+  def search
+    images = []
+    Image.all.each do |img|
+      if img.tags.downcase().include?(params[:search].downcase())
+        images << img
+      end
+    end
+
+    Image.set_selection(images)
+
+    respond_to do |format|
+      format.html { redirect_to root_url + "repository/?search=#{params[:search]}", notice: 'Success' }
+      format.json { head :no_content }
+    end
+  end
+
+  def image_search
+    response = @image_annotator.label_detection(
+      image: params[:image].tempfile.path,
+      max_results: 10
+    )
+
+    matches = []
+    Image.all.each do |img|
+      response.responses.each do |res|
+        res.label_annotations.each do |label|
+          tag = label.description.downcase()
+          if img.tags.downcase().include?(tag)
+            matches << img
+            break
+          end
+        end
+      end
+    end
+
+    Image.set_selection(matches)
+
+    respond_to do |format|
+      format.html { redirect_to root_path, notice: 'Success' }
+      format.json { head :no_content }
+    end
   end
 end

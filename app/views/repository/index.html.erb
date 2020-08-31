@@ -1,15 +1,19 @@
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
   <a class="navbar-brand text-light">ImageRespository</a>
-  <form class="form-inline" style="margin-left: auto">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadImageModal">Upload</button>
+  <div class="form-inline" style="margin-left: auto">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#imageSearchModal">Image Search</button>
     <div style="padding-left: 10px;">
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadImageModal">Upload</button>
+    </div>
+    <div style="padding-left: 10px; padding-right: 10px">
       <button class="btn btn-danger" type="button">Delete</button>
     </div>
-    <div style="padding-left: 10px;">
-      <input class="form-control mr-sm-2" type="text" placeholder="Search">
-    </div>
-    <button class="btn btn-light" type="submit">Search</button>
-  </form>
+    <form method="GET" action="/repository/search">
+      <%= token_tag %>
+      <input id="search" class="form-control mr-sm-2" name="search" type="text" placeholder="Search">
+      <input class="btn btn-light" type="submit" value="Search">
+    </form>
+  </div>
 </nav>
 
 <div class="modal fade" id="uploadImageModal" tabindex="-1" role="dialog" aria-labelledby="uploadImageModalLabel" aria-hidden="true">
@@ -22,24 +26,54 @@
         </button>
       </div>
       <div class="modal-body">
-        <div class="form-popup" id="myForm">
-          <form class="uploads" method="POST" action="/repository/upload" enctype="multipart/form-data">
-            <%= token_tag %>
-            <div class="form-group">
-              <input type="file" name="image">
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <input class="btn btn-primary" type="submit" value="Upload" data-toggle="modal" data-target="#uploadImageModal">
-            </div>
-          </form>
-        </div>
+        <form method="POST" action="/repository/upload" enctype="multipart/form-data">
+          <%= token_tag %>
+          <div class="form-group">
+            <input type="file" name="image">
+          </div>
+          <div class="modal-footer">
+            <input class="btn btn-primary" type="submit" value="Upload" data-toggle="modal" data-target="#uploadImageModal">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 </div>
 
-<h1 class="test">In progress</h1>
+<div class="modal fade" id="imageSearchModal" tabindex="-1" role="dialog" aria-labelledby="imageSearchModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Upload</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="/repository/image_search" enctype="multipart/form-data">
+          <%= token_tag %>
+          <div class="form-group">
+            <input type="file" name="image">
+          </div>
+          <div class="modal-footer">
+            <input class="btn btn-primary" type="submit" value="Search Image" data-toggle="modal" data-target="#imageSearchModal">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form class="form-inline">
+  <% Image.get_selection.each do |image| %>
+    <div style="padding: 10px;">
+      <% @url = @s3.bucket(Rails.application.credentials.aws[:bucket]).object(image.id.to_s).presigned_url(:get, expires_in: 604800) %>
+      <%= link_to image_tag(@url, class: "image-size"), @url %>
+    </div>
+  <% end %>
+</form>
 
 <script>
 </script>
