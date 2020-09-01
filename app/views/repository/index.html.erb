@@ -96,7 +96,7 @@
 
 <div class="form-inline">
   <% Image.get_selection.each do |image| %>
-    <div class="shadow" style="margin: 10px;width: 302px; height: 247px; text-align: center; vertical-align: center">
+    <div class="shadow" style="margin: 10px;width: 300px; height: 247px; text-align: center; vertical-align: center">
       <div style="text-align: center;width: 300px; height: 200px; position: relative">
         <% @url = @s3.bucket(Rails.application.credentials.aws[:bucket]).object(image.id.to_s).presigned_url(:get, expires_in: 604800) %>
         <%= link_to image_tag(@url, class: "imageSize"), @url %>
