@@ -1,24 +1,20 @@
-# README
+# Vikram's Image Repo
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Description
+An image repository created for Shopify's winter 2021 intern application.
 
-Things you may want to cover:
+## Technologies Used
+- Ruby on Rails (Ruby version 2.6.3, Rails version 6.0.3)
+- AWS SDK (connect to s3 for uploading/retrieving of files)
+- PostgreSQL hosted on AWS RDS
+- Google Cloud Vision API (for image labelling and OCR)
 
-* Ruby version
+## Features
+- Search based on images characteristics
+- Search based on text inside images
+- Reverse search using an uploaded image
+- Ability to upload and store images securely
+- Individual/bulk deleting
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+## Note
+In order to run this code, several credentials and keys are required that have not been included in this repository for security purposes. 
