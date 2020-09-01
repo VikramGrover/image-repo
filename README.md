@@ -16,5 +16,8 @@ An image repository created for Shopify's winter 2021 intern application.
 - Ability to upload and store images securely
 - Individual/bulk deleting
 
+## Screenshot
+![alt text](https://i.imgur.com/oOAi38S.png)
+
 ## Note
 In order to run this code, several credentials and keys are required that have not been included in this repository for security purposes. 
