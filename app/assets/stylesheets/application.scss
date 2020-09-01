@@ -22,7 +22,18 @@ $black: black;
   font-family: 'Merriweather', sans-serif;
 }
 
-.image-size {
+.imageSize {
   max-width: 300px;
   max-height: 200px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+.deleteButton{
+  margin-left: 5px;
+  margin-right: 10px;
 }

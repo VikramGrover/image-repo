@@ -1,17 +1,25 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
   <a class="navbar-brand text-light">ImageRespository</a>
+  <a class="text-info small" style="margin-left: 50px"><%= Image.get_status %></a>
   <div class="form-inline" style="margin-left: auto">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#imageSearchModal">Image Search</button>
-    <div style="padding-left: 10px;">
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadImageModal">Upload</button>
-    </div>
-    <div style="padding-left: 10px; padding-right: 10px">
-      <button class="btn btn-danger" type="button">Delete</button>
-    </div>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#imageSearchModal">Image Search</button>
+    <button style="margin-left: 10px;" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#uploadImageModal">Upload</button>
+    <button style="margin-left: 10px; margin-right: 10px" class="btn btn-danger btn-sm" type="button" data-toggle="modal" data-target="#deleteAllModal">Delete All</button>
     <form method="GET" action="/repository/search">
       <%= token_tag %>
-      <input id="search" class="form-control mr-sm-2" name="search" type="text" placeholder="Search">
-      <input class="btn btn-light" type="submit" value="Search">
+      <input id="search" class="form-control mr-sm-2 btn-sm" name="search" type="text" placeholder="Search">
+      <button class="btn btn-light btn-sm" type="submit" style="margin-left: -5px">
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/>
+          <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
+        </svg>
+      </button>
+    </form>
+    <form method="GET" action="/repository/clear_search">
+      <%= token_tag %>
+      <input class="btn btn-light btn-sm" type="submit" value="Clear Search" style="margin-left: 10px;">
     </form>
   </div>
 </nav>
@@ -33,7 +41,7 @@
           </div>
           <div class="modal-footer">
             <input class="btn btn-primary" type="submit" value="Upload" data-toggle="modal" data-target="#uploadImageModal">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" data-target="#uploadImageModal">Close</button>
           </div>
         </form>
       </div>
@@ -57,8 +65,8 @@
             <input type="file" name="image">
           </div>
           <div class="modal-footer">
-            <input class="btn btn-primary" type="submit" value="Search Image" data-toggle="modal" data-target="#imageSearchModal">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <input class="btn btn-primary" type="submit" value="Search Similar Images" data-toggle="modal" data-target="#imageSearchModal">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" data-target="#imageSearchModal">Close</button>
           </div>
         </form>
       </div>
@@ -66,17 +74,48 @@
   </div>
 </div>
 
-<form class="form-inline">
+<div class="modal fade" id="deleteAllModal" tabindex="-1" role="dialog" aria-labelledby="deleteAllModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete All</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <p>Are you sure you want to delete all data?</p>
+          <div class="modal-footer">
+            <%= button_to "Delete All", { controller: "repository", action: "delete", id: -1}, method: "delete", class: "btn btn-danger" %>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" data-target="#deleteAllModal">Close</button>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="form-inline">
   <% Image.get_selection.each do |image| %>
-    <div style="padding: 10px;">
-      <% @url = @s3.bucket(Rails.application.credentials.aws[:bucket]).object(image.id.to_s).presigned_url(:get, expires_in: 604800) %>
-      <%= link_to image_tag(@url, class: "image-size"), @url %>
+    <div class="shadow" style="margin: 10px;width: 302px; height: 247px; text-align: center; vertical-align: center">
+      <div style="text-align: center;width: 300px; height: 200px; position: relative">
+        <% @url = @s3.bucket(Rails.application.credentials.aws[:bucket]).object(image.id.to_s).presigned_url(:get, expires_in: 604800) %>
+        <%= link_to image_tag(@url, class: "imageSize"), @url %>
+      </div>
+      <div style="margin-top: 7px" class="form-inline">
+        <div style="margin-left: auto">
+          <%= link_to '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-download" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+  <path fill-rule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+</svg>'.html_safe, { controller: "repository", action: "download", id: image.id}, method: "get", class: "btn btn-outline-primary btn-sm" %>
+          <%= link_to '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z"/>
+</svg>'.html_safe, { controller: "repository", action: "delete", id: image.id}, method: "delete", class: "btn btn-outline-danger btn-sm deleteButton" %>
+          </div>
+        </div>
     </div>
   <% end %>
-</form>
+</div>
 
-<script>
-</script>
 
 
 

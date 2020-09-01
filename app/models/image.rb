@@ -12,8 +12,9 @@
 #
 class Image < ApplicationRecord
   @currently_selected = Image.all
+  @status = ''
 
-  def self.clear_selection
+  def self.reset_selection
     @currently_selected = Image.all
   end
 
@@ -23,5 +24,13 @@ class Image < ApplicationRecord
 
   def self.get_selection
     @currently_selected
+  end
+
+  def self.set_status(status)
+    @status = status
+  end
+
+  def self.get_status
+    @status
   end
 end
