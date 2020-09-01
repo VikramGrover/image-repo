@@ -6,7 +6,7 @@ An image repository created for Shopify's winter 2021 intern application.
 ## Technologies Used
 - Ruby on Rails (Ruby version 2.6.3, Rails version 6.0.3)
 - AWS SDK (connect to s3 for uploading/retrieving of files)
-- PostgreSQL hosted on AWS RDS
+- PostgreSQL hosted on Amazon Relation Database Service (RDS)
 - Google Cloud Vision API (for image labelling and OCR)
 
 ## Features
