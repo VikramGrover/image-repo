@@ -1,7 +1,7 @@
 # Vikram's Image Repo
 
 ## Description
-An image repository created for Shopify's winter 2021 intern application.
+An image repository that supports uploading of images, downloading of stored images and searching of images based on image characteristics. 
 
 ## Technologies Used
 - Ruby on Rails (Ruby version 2.6.3, Rails version 6.0.3)
