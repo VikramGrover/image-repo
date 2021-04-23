@@ -10,7 +10,7 @@ An image repository that supports uploading of images, downloading of stored ima
 - Google Cloud Vision API (for image labelling and OCR)
 
 ## Features
-- Search based on images characteristics
+- Search based on image content
 - Search based on text inside images
 - Reverse search using an uploaded image
 - Ability to upload and store images securely
