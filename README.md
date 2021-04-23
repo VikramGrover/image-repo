@@ -1,7 +1,7 @@
-# Vikram's Image Repo
+# Image Repo
 
 ## Description
-An image repository that supports uploading of images, downloading of stored images and searching of images based on image characteristics. 
+An image repository that supports uploading of images, downloading of stored images and querying of images based on image content. 
 
 ## Technologies Used
 - Ruby on Rails (Ruby version 2.6.3, Rails version 6.0.3)
